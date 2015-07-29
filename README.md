@@ -1,14 +1,4 @@
-<a href="http://promisesaplus.com/">
-  <img src="https://promises-aplus.github.io/promises-spec/assets/logo-small.png"
-    align="right" valign="top" alt="Promises/A+ logo">
-</a>
-
-# supertest-as-promised
-
-<a href="https://travis-ci.org/WhoopInc/supertest-as-promised">
-  <img src="https://travis-ci.org/WhoopInc/supertest-as-promised.svg?branch=master"
-    align="right" valign="top" alt="Build Status">
-</a>
+# supertest-session-as-promised
 
 SuperTest as Promised supercharges [SuperTest] with a `then` method.
 
@@ -35,7 +25,7 @@ request(app)
 chain your requests like you were promised:
 
 ```js
-return request(app)
+return session
   .get("/user")
   .expect(200)
   .then(function (res) {
@@ -49,24 +39,15 @@ return request(app)
   });
 ```
 
-## Usage
-
-SuperTest as Promised operates just like normal [SuperTest], except that the
-object returned by `.get`, `.post`, etc. is a proper
-thenable:
-
+## Usage (mocha example)
 ```js
-var express = require("express")
-  , request = require("supertest-as-promised");
-
-var app = express();
-
-request(app)
-  .get("/kittens")
-  .expect(200)
-  .then(function (res) {
-    // ...
-  });
+var sessionFactory = require("supertest-session-as-promised"),
+	app = /* get an express app or something */,
+	session;
+	
+beforeEach(function(){
+	session = sessionFactory.create({app:app});
+});
 ```
 
 If you use a promise-friendly test runner, you can just
@@ -76,26 +57,19 @@ callback:
 ```js
 describe("GET /kittens", function () {
   it("should work", function () {
-    return request(app).get("/kittens").expect(200);
+    return session.get("/kittens").expect(200);
   });
 });
 ```
+## Cookies
+If you don't care about sessions, use [supertest-as-promised](https://github.com/WhoopInc/supertest-as-promised) module, which this is based off of.
 
-### Agents
-
-If you use a SuperTest agent to persist cookies, those are thenable too:
+Cookies are available through
 
 ```js
-var agent = require("supertest-as-promised").agent(app);
-
-agent
-  .get("/ugly-kitteh")
-  .expect(404)
-  .then(function () {
-    // ...
-  })
+var session = sessionFactory.create({app:app});
+session.cookies
 ```
-
 
 ### Promisey goodness
 
@@ -104,7 +78,7 @@ once, you've got a proper [Bluebird] promise that supports the whole gamut of
 promisey goodness:
 
 ```js
-request(app)
+session
   .get("/kittens")
   .expect(201)
   .then(function (res) { /* ... */ })
@@ -118,7 +92,7 @@ You may find it cleaner to cast directly to a promise using the `toPromise`
 method:
 
 ```js
-request(app)
+session
   .get("/kittens")
   .expect(201)
   .toPromise()
@@ -127,67 +101,13 @@ request(app)
   .then(function (res) { /* ... */ })
 ```
 
-### BYOP: Bring your own `Promise`
-
-You can supply own promise library so that the promises returned have your
-convenience methods of choice.
-
-Simply call the SuperTest as Promised module with a ES6-compliant `Promise`
-constructor, and you'll get back a new module configured to return your custom
-promises. To swap in [when.js], for example:
-
-```js
-var when = require("when")
-  , request;
-
-request = require("supertest-as-promised")(when.Promise);
-request(app)
-  .get("/when.js")
-  .then(function (res) { /* ... */ })
-  // I'm a when.js promise! (instanceof when.Promise == true)
-  .frobulate()
-
-request = require("supertest-as-promised");
-request(app)
-  .get("/bluebird.js")
-  .then(function (res) { /* .. */ })
-  // I'm back to the default Bluebird promise!
-```
-
-
 ## Installation
 
 ### Node
 
 ```bash
-$ npm install supertest-as-promised
+$ npm install supertest-session-as-promised
 ```
-
-SuperTest as Promised lists [`supertest`][SuperTest] as a
-[peer dependency][peer-dependency], so it'll wrap whatever version of SuperTest
-you've asked for in your own `package.json`. If you don't specify a version of
-SuperTest, npm will use the latest.
-
-Do note that SuperTest as Promised is a well-behaved citizen and doesn't
-monkey-patch SuperTest directly:
-
-```js
-// I return thenables!
-var request = require("supertest-as-promised");
-
-// I'm lame and force you to use callbacks
-var request = require("supertest");
-```
-
-
-## Versions
-
-We follow [semver]: the major version number will be upgraded with any breaking
-change. Breaking changes in each major version are listed below. Consult the
-[changelog] for a list of meaningful new features in each version; consult the
-commit log for a complete list.
-
-### Breaking changes in 2.0
 
 * [Bluebird][bluebird] has been upgraded to version 2.9.24.
 

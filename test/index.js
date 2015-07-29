@@ -1,87 +1,64 @@
-var expect = require("chai").expect
-  , http = require("http")
-  , Promise = require("bluebird")
-  , PromiseWhen = require("when").Promise
-  , supertest = require("supertest")
-  , supertestAsPromised = require("..");
+var chai = require("chai"),
+	chaiAsPromised = require("chai-as-promised"),
+	expect = chai.expect,
+	rewire = require("rewire"),
+	session = require('express-session'),
+	cookieParser = require('cookie-parser'),
+	express = require('express'),
+  Promise = require("bluebird"),
+  supertest = require("supertest"),
+  sessionFactory = require(".."),
+	app = express(),
+	session;
+	
+app.use(cookieParser());
+app.use(session({ 
+	resave:true,
+	saveUninitialized: true,
+	secret: 'keyboard cat' 
+}));
+app.get('/magic-cookie', function(req, res){ 
+	res.cookie('magic', 'cookie');
+	res.end("helo"); 
+});
+app.use(function(req, res){ res.end("helo"); });
 
-var server = http.createServer(function (req, res) {
-  res.end("helo");
+chai.use(chaiAsPromised);
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+
+beforeEach(function(){
+	session = sessionFactory.create({app: app});
 });
 
-describe("supertestAsPromised", function () {
-  var request = supertestAsPromised(server);
+describe("Test instances", function () {
+	describe("#toPromise", function () {
+		it("should return a bluebird promise by default", function () {
+			expect(session.get("/home").toPromise()).to.be.an.instanceOf(Promise);
+		});
 
-  describe("Test instances", function () {
-    describe("#toPromise", function () {
-      it("should return a bluebird promise by default", function () {
-        expect(request.get("/home").toPromise()).to.be.an.instanceOf(Promise);
-      });
+		it("should still return a bluebird promise by default", function () {
+			expect(session.get("/home").toPromise()).to.be.an.instanceOf(Promise);
+		});
+	});
 
-      it("should return a when promise if configured with when", function () {
-        var request = supertestAsPromised(PromiseWhen)(server);
-        expect(request.get("/home").toPromise()).to.be.an.instanceOf(PromiseWhen);
-      });
+	it("should fulfill if all assertions pass", function () {
+		return expect(session.get("/home").expect(200)).to.eventually.be.fulfilled;
+	});
 
-      it("should still return a bluebird promise by default", function () {
-        expect(request.get("/home").toPromise()).to.be.an.instanceOf(Promise);
-      });
-    });
+	it("should fulfill with the response", function () {
+		return session.get("/home").then(function (res) {
+			expect(res.text).to.equal("helo");
+		});
+	});
 
-    it("should fulfill if all assertions pass", function () {
-      return expect(request.get("/home").expect(200)).to.eventually.be.fulfilled;
-    });
-
-    it("should fulfill with the response", function () {
-      return request.get("/home").then(function (res) {
-        expect(res.text).to.equal("helo");
-      });
-    });
-
-    it("should reject if an assertion fails", function () {
-      return expect(request.get("/home").expect(500)).to.eventually.be.rejected;
-    });
-  });
-
-  describe("TestAgent instances", function () {
-    var agent = supertestAsPromised.agent(server);
-
-    describe("#toPromise", function () {
-      it("should return a promise", function () {
-        expect(agent.get("/home").toPromise()).to.be.an.instanceOf(Promise);
-      });
-    });
-
-    it("should fulfill if all assertions pass", function () {
-      return expect(agent.get("/home").expect(200)).to.eventually.be.fulfilled;
-    });
-
-    it("should fulfill with the response", function () {
-      return agent.get("/home").then(function (res) {
-        expect(res.text).to.equal("helo");
-      });
-    });
-
-    it("should reject if an assertion fails", function () {
-      return expect(agent.get("/home").expect(500)).to.eventually.be.rejected;
-    });
-  });
-});
-
-describe("supertest", function () {
-  describe("Test instances", function () {
-    var request = supertest(server);
-
-    it("should not be a promise", function () {
-      request.get("/home").should.not.have.property("then");
-    });
-  });
-
-  describe("TestAgent instances", function () {
-    var agent = supertest.agent(server);
-
-    it("should not be a promise", function () {
-      agent.get("/home").should.not.have.property("then");
-    });
-  });
+	it("should reject if an assertion fails", function () {
+		return expect(session.get("/home").expect(500)).to.eventually.be.rejected;
+	});
+	it("should save cookies", function(){
+		return session.get('/magic-cookie').then(function(){
+			return session.get('/').then(function(){
+				expect(session.cookies.filter(function(x){ return x.magic === 'cookie'; })).to.have.length(1);
+			});
+		});
+	});
 });
