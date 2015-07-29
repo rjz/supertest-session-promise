@@ -1,0 +1,122 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'c:\\Program Files\\nodejs\\node.exe',
+1 verbose cli   'c:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'publish',
+1 verbose cli   '.' ]
+2 info using npm@2.11.3
+3 info using node@v0.12.7
+4 verbose publish [ '.' ]
+5 silly cache add args [ '.', null ]
+6 verbose cache add spec .
+7 silly cache add parsed spec { raw: '.',
+7 silly cache add   scope: null,
+7 silly cache add   name: null,
+7 silly cache add   rawSpec: '.',
+7 silly cache add   spec: 'c:\\Users\\ssteffl\\Develop\\npm_modules\\supertest-session-as-promised',
+7 silly cache add   type: 'directory' }
+8 verbose addLocalDirectory C:\Users\ssteffl\AppData\Roaming\npm-cache\supertest-session-as-promised\2.0.3\package.tgz not in flight; packing
+9 verbose tar pack [ 'C:\\Users\\ssteffl\\AppData\\Roaming\\npm-cache\\supertest-session-as-promised\\2.0.3\\package.tgz',
+9 verbose tar pack   'c:\\Users\\ssteffl\\Develop\\npm_modules\\supertest-session-as-promised' ]
+10 verbose tarball C:\Users\ssteffl\AppData\Roaming\npm-cache\supertest-session-as-promised\2.0.3\package.tgz
+11 verbose folder c:\Users\ssteffl\Develop\npm_modules\supertest-session-as-promised
+12 info prepublish supertest-session-as-promised@2.0.3
+13 verbose addLocalTarball adding from inside cache C:\Users\ssteffl\AppData\Roaming\npm-cache\supertest-session-as-promised\2.0.3\package.tgz
+14 silly cache afterAdd supertest-session-as-promised@2.0.3
+15 verbose afterAdd C:\Users\ssteffl\AppData\Roaming\npm-cache\supertest-session-as-promised\2.0.3\package\package.json not in flight; writing
+16 verbose afterAdd C:\Users\ssteffl\AppData\Roaming\npm-cache\supertest-session-as-promised\2.0.3\package\package.json written
+17 silly publish { name: 'supertest-session-as-promised',
+17 silly publish   version: '2.0.3',
+17 silly publish   description: 'Supercharge supertest with a promise interface / sessions',
+17 silly publish   main: 'index.js',
+17 silly publish   scripts: { test: 'mocha' },
+17 silly publish   repository:
+17 silly publish    { type: 'git',
+17 silly publish      url: 'git://github.com/ssteffl/supertest-session-as-promised.git' },
+17 silly publish   keywords:
+17 silly publish    [ 'supertest',
+17 silly publish      'superagent',
+17 silly publish      'session',
+17 silly publish      'request',
+17 silly publish      'tdd',
+17 silly publish      'bdd',
+17 silly publish      'http',
+17 silly publish      'test',
+17 silly publish      'testing',
+17 silly publish      'promise',
+17 silly publish      'promised' ],
+17 silly publish   author: { name: 'Nikhil Benesch', email: 'benesch@whoop.com' },
+17 silly publish   contributors: [ { name: 'Samuel Steffl', email: 'sammysteffl@gmail.com' } ],
+17 silly publish   license: 'MIT',
+17 silly publish   bugs: { url: 'https://github.com/ssteffl/supertest-session-as-promised/issues' },
+17 silly publish   homepage: 'https://github.com/ssteffl/supertest-session-as-promised',
+17 silly publish   devDependencies:
+17 silly publish    { 'body-parser': '~1.12.3',
+17 silly publish      chai: '^2.2.0',
+17 silly publish      'chai-as-promised': '^4.3.0',
+17 silly publish      'cookie-parser': '^1.3.5',
+17 silly publish      express: '^4.13.1',
+17 silly publish      'express-session': '^1.11.3',
+17 silly publish      mocha: '2.2.4',
+17 silly publish      rewire: '^2.3.1',
+17 silly publish      should: '^7.0.2',
+17 silly publish      supertest: '^1.0.1' },
+17 silly publish   dependencies:
+17 silly publish    { bluebird: '^2.9.24',
+17 silly publish      methods: '^1.1.1',
+17 silly publish      'supertest-session': '^1.0.0' },
+17 silly publish   readme: '# supertest-session-as-promised\r\n\r\nSuperTest as Promised supercharges [SuperTest] with a `then` method.\r\n\r\nInstead of layering callbacks on callbacks in your tests:\r\n\r\n```js\r\nrequest(app)\r\n  .get("/user")\r\n  .expect(200, function (err, res) {\r\n    if (err) return done(err);\r\n\r\n    var userId = res.body.id;\r\n    request(app)\r\n      .post("/kittens")\r\n      .send({ userId: userId, ... })\r\n      .expect(201, function (err, res) {\r\n        if (err) return done(err);\r\n\r\n        // ...\r\n      });\r\n  });\r\n```\r\n\r\nchain your requests like you were promised:\r\n\r\n```js\r\nreturn session\r\n  .get("/user")\r\n  .expect(200)\r\n  .then(function (res) {\r\n    return request(app)\r\n      .post("/kittens")\r\n      .send({ userId: res})\r\n      .expect(201);\r\n  })\r\n  .then(function (res) {\r\n    // ...\r\n  });\r\n```\r\n\r\n## Usage (mocha example)\r\n```js\r\nvar sessionFactory = require("supertest-session-as-promised"),\r\n\tapp = /* get an express app or something */,\r\n\tsession;\r\n\t\r\nbeforeEach(function(){\r\n\tsession = sessionFactory.create({app:app});\r\n});\r\n```\r\n\r\nIf you use a promise-friendly test runner, you can just\r\nreturn your `request` chain from the test case rather than messing with a\r\ncallback:\r\n\r\n```js\r\ndescribe("GET /kittens", function () {\r\n  it("should work", function () {\r\n    return session.get("/kittens").expect(200);\r\n  });\r\n});\r\n```\r\n## Cookies\r\nIf you don\'t care about sessions, use [supertest-as-promised](https://github.com/WhoopInc/supertest-as-promised) module, which this is based off of.\r\n\r\nCookies are available through\r\n\r\n```js\r\nvar session = sessionFactory.create({app:app});\r\nsession.cookies\r\n```\r\n\r\n### Promisey goodness\r\n\r\nTo start, only the `then` method is exposed. But once you\'ve called `.then`\r\nonce, you\'ve got a proper [Bluebird] promise that supports the whole gamut of\r\npromisey goodness:\r\n\r\n```js\r\nsession\r\n  .get("/kittens")\r\n  .expect(201)\r\n  .then(function (res) { /* ... */ })\r\n  // I\'m a real promise now!\r\n  .catch(function (err) { /* ... */ })\r\n```\r\n\r\nSee the [Bluebird API][bluebird-api] for everything that\'s available.\r\n\r\nYou may find it cleaner to cast directly to a promise using the `toPromise`\r\nmethod:\r\n\r\n```js\r\nsession\r\n  .get("/kittens")\r\n  .expect(201)\r\n  .toPromise()\r\n  // I\'m a real promise now!\r\n  .delay(function (res) { /* ... */ })\r\n  .then(function (res) { /* ... */ })\r\n```\r\n\r\n## Installation\r\n\r\n### Node\r\n\r\n```bash\r\n$ npm install supertest-session-as-promised\r\n```\r\n\r\n* [Bluebird][bluebird] has been upgraded to version 2.9.24.\r\n\r\n[bluebird]: https://github.com/petkaantonov/bluebird\r\n[bluebird-api]: https://github.com/petkaantonov/bluebird/blob/master/API.md#promiseisdynamic-value---boolean\r\n[changelog]: CHANGELOG.md\r\n[peer-dependency]: http://blog.nodejs.org/2013/02/07/peer-dependencies/\r\n[semver]: http://semver.org\r\n[SuperTest]: https://github.com/visionmedia/supertest\r\n[when.js]: https://github.com/cujojs/when\r\n',
+17 silly publish   readmeFilename: 'README.md',
+17 silly publish   gitHead: '1f306e7033801507837990040b04f83830845957',
+17 silly publish   _id: 'supertest-session-as-promised@2.0.3',
+17 silly publish   _shasum: '11da0f7d367c7d1bc7de991d3c09d4ddde49e11d',
+17 silly publish   _from: '.' }
+18 verbose getPublishConfig undefined
+19 silly mapToRegistry name supertest-session-as-promised
+20 silly mapToRegistry using default registry
+21 silly mapToRegistry registry https://registry.npmjs.org/
+22 silly mapToRegistry uri https://registry.npmjs.org/supertest-session-as-promised
+23 verbose publish registryBase https://registry.npmjs.org/
+24 silly publish uploading C:\Users\ssteffl\AppData\Roaming\npm-cache\supertest-session-as-promised\2.0.3\package.tgz
+25 verbose request uri https://registry.npmjs.org/supertest-session-as-promised
+26 verbose request sending authorization for write operation
+27 info attempt registry request try #1 at 11:43:39 AM
+28 verbose request using bearer token for auth
+29 verbose request id 70a941bca078a945
+30 http request PUT https://registry.npmjs.org/supertest-session-as-promised
+31 http 403 https://registry.npmjs.org/supertest-session-as-promised
+32 verbose headers { 'content-type': 'application/json',
+32 verbose headers   'cache-control': 'max-age=60',
+32 verbose headers   'content-length': '121',
+32 verbose headers   'accept-ranges': 'bytes',
+32 verbose headers   date: 'Wed, 29 Jul 2015 16:43:40 GMT',
+32 verbose headers   via: '1.1 varnish',
+32 verbose headers   connection: 'close',
+32 verbose headers   'x-served-by': 'cache-atl6225-ATL',
+32 verbose headers   'x-cache': 'MISS',
+32 verbose headers   'x-cache-hits': '0',
+32 verbose headers   'x-timer': 'S1438188220.265382,VS0,VE403' }
+33 verbose request invalidating C:\Users\ssteffl\AppData\Roaming\npm-cache\registry.npmjs.org\supertest-session-as-promised on PUT
+34 error publish Failed PUT 403
+35 verbose stack Error: You do not have permission to publish 'supertest-session-as-promised'. Are you logged in as the correct user? : supertest-session-as-promised
+35 verbose stack     at CachingRegistryClient.<anonymous> (c:\Program Files\nodejs\node_modules\npm\node_modules\npm-registry-client\lib\request.js:247:14)
+35 verbose stack     at Request._callback (c:\Program Files\nodejs\node_modules\npm\node_modules\npm-registry-client\lib\request.js:170:14)
+35 verbose stack     at Request.self.callback (c:\Program Files\nodejs\node_modules\npm\node_modules\request\request.js:354:22)
+35 verbose stack     at Request.emit (events.js:110:17)
+35 verbose stack     at Request.<anonymous> (c:\Program Files\nodejs\node_modules\npm\node_modules\request\request.js:1207:14)
+35 verbose stack     at Request.emit (events.js:129:20)
+35 verbose stack     at IncomingMessage.<anonymous> (c:\Program Files\nodejs\node_modules\npm\node_modules\request\request.js:1153:12)
+35 verbose stack     at IncomingMessage.emit (events.js:129:20)
+35 verbose stack     at _stream_readable.js:908:16
+35 verbose stack     at process._tickCallback (node.js:355:11)
+36 verbose statusCode 403
+37 verbose pkgid supertest-session-as-promised
+38 verbose cwd c:\Users\ssteffl\Develop\npm_modules\supertest-session-as-promised
+39 error Windows_NT 6.3.9600
+40 error argv "c:\\Program Files\\nodejs\\node.exe" "c:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "publish" "."
+41 error node v0.12.7
+42 error npm  v2.11.3
+43 error code E403
+44 error You do not have permission to publish 'supertest-session-as-promised'. Are you logged in as the correct user? : supertest-session-as-promised
+45 error If you need help, you may report this error at:
+45 error     <https://github.com/npm/npm/issues>
+46 verbose exit [ 1, true ]

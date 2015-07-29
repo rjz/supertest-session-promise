@@ -1,4 +1,4 @@
-# supertest-session-as-promised
+# supertest-session-promise
 
 SuperTest as Promised supercharges [SuperTest] with a `then` method.
 
@@ -41,7 +41,7 @@ return session
 
 ## Usage (mocha example)
 ```js
-var sessionFactory = require("supertest-session-as-promised"),
+var sessionFactory = require("supertest-session-promise"),
 	app = /* get an express app or something */,
 	session;
 	
@@ -106,7 +106,7 @@ session
 ### Node
 
 ```bash
-$ npm install supertest-session-as-promised
+$ npm install supertest-session-promise
 ```
 
 * [Bluebird][bluebird] has been upgraded to version 2.9.24.
