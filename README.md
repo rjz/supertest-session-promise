@@ -46,7 +46,7 @@ var sessionFactory = require("supertest-session-promise"),
 	session;
 	
 beforeEach(function(){
-	session = sessionFactory.create({app:app});
+	session = sessionFactory.create(app);
 });
 ```
 
@@ -67,7 +67,7 @@ If you don't care about sessions, use [supertest-as-promised](https://github.com
 Cookies are available through
 
 ```js
-var session = sessionFactory.create({app:app});
+var session = sessionFactory.create(app);
 session.cookies
 ```
 

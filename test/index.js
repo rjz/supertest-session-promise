@@ -27,7 +27,7 @@ chai.use(chaiAsPromised);
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
 
 beforeEach(function(){
-	session = sessionFactory.create({app: app});
+	session = sessionFactory.create(app);
 });
 
 describe("Test instances", function () {

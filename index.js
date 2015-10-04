@@ -44,9 +44,8 @@ module.exports = (function(){
   }
 
   return {
-		create: function(options){
-			var Session = session(options);
-			return wrap(new Session());
+		create: function(app, options){
+			return wrap(session(app, options));
 		}
 	};
 }());
